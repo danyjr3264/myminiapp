@@ -1,6 +1,3 @@
-// Hapus impor langsung NeynarClient dari ESM
-// import { NeynarClient } from 'https://esm.sh/@neynar/nodejs-sdk';
-
 let client;
 
 async function initializeNeynarClient() {
@@ -15,7 +12,6 @@ async function loginWithWarpcast() {
     window.location.href = authUrl;
 }
 
-// Sisanya sama seperti sebelumnya
 function displayProfile(fid, walletAddress) {
     document.getElementById('profile').innerHTML = `
         FID: ${fid} | Wallet: ${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}
