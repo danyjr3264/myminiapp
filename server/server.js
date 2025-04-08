@@ -1,16 +1,19 @@
 require('dotenv').config();
 const express = require('express');
-const path = require('path'); // Tambahkan ini untuk menangani jalur file
+const path = require('path');
 const app = express();
 
 app.use(express.json());
-app.use(express.static('public')); // Sajikan file dari folder public
+app.use(express.static(path.join(__dirname, '..', 'public'))); // Pastikan jalur public benar
 
 const pointsDB = {};
 
 // Endpoint untuk check-in
 app.post('/api/checkin', (req, res) => {
     const { fid } = req.body;
+    if (!fid) {
+        return res.status(400).json({ error: 'FID is required' });
+    }
     pointsDB[fid] = (pointsDB[fid] || 0) + 100;
     res.json({ success: true, points: pointsDB[fid] });
 });
@@ -23,14 +26,21 @@ app.get('/api/leaderboard', (req, res) => {
     res.json(leaderboard);
 });
 
-// Endpoint untuk memberikan API key ke frontend
+// Endpoint untuk API key Neynar
 app.get('/api/config', (req, res) => {
+    if (!process.env.NEYNAR_API_KEY) {
+        return res.status(500).json({ error: 'Neynar API key not configured' });
+    }
     res.json({ neynarApiKey: process.env.NEYNAR_API_KEY });
 });
 
-// Tambahkan ini: Sajikan index.html untuk semua rute yang tidak cocok
+// Fallback untuk menyajikan index.html
 app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../public', 'index.html'));
+    res.sendFile(path.join(__dirname, '..', 'public', 'index.html'), (err) => {
+        if (err) {
+            res.status(500).send('Error serving index.html');
+        }
+    });
 });
 
 // Reset leaderboard bulanan
