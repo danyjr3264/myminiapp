@@ -4,11 +4,10 @@ const path = require('path');
 const app = express();
 
 app.use(express.json());
-app.use(express.static(path.join(__dirname, '..', 'public'))); // Pastikan jalur public benar
+app.use(express.static(path.join(__dirname, '..', 'public')));
 
 const pointsDB = {};
 
-// Endpoint untuk check-in
 app.post('/api/checkin', (req, res) => {
     const { fid } = req.body;
     if (!fid) {
@@ -18,7 +17,6 @@ app.post('/api/checkin', (req, res) => {
     res.json({ success: true, points: pointsDB[fid] });
 });
 
-// Endpoint untuk leaderboard
 app.get('/api/leaderboard', (req, res) => {
     const leaderboard = Object.entries(pointsDB)
         .map(([fid, points]) => ({ fid, points }))
@@ -26,7 +24,6 @@ app.get('/api/leaderboard', (req, res) => {
     res.json(leaderboard);
 });
 
-// Endpoint untuk API key Neynar
 app.get('/api/config', (req, res) => {
     if (!process.env.NEYNAR_API_KEY) {
         return res.status(500).json({ error: 'Neynar API key not configured' });
@@ -34,7 +31,6 @@ app.get('/api/config', (req, res) => {
     res.json({ neynarApiKey: process.env.NEYNAR_API_KEY });
 });
 
-// Fallback untuk menyajikan index.html
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, '..', 'public', 'index.html'), (err) => {
         if (err) {
@@ -43,7 +39,6 @@ app.get('*', (req, res) => {
     });
 });
 
-// Reset leaderboard bulanan
 function resetLeaderboard() {
     const now = new Date();
     if (now.getDate() === 1 && now.getHours() === 0) {
