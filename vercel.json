@@ -8,15 +8,15 @@
     ],
     "routes": [
         {
-            "src": "/(index\\.html|style\\.css|script\\.js|icon\\.png|preview\\.png)",
+            "src": "^/(index.html|style.css|script.js|icon.png|preview.png)$",
             "dest": "/public/$1"
         },
         {
-            "src": "/api/.*",
+            "src": "^/api/.*",
             "dest": "/server/server.js"
         },
         {
-            "src": "/.*",
+            "src": ".*",
             "dest": "/server/server.js"
         }
     ]
